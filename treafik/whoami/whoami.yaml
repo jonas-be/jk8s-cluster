@@ -43,13 +43,11 @@ kind: Ingress
 metadata:
   name: whoami-ingress
   annotations:
-    kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    # traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    # traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
+  ingressClassName: traefik
   rules:
-    - host: jonasbe.de
+    - host: whoami.jonasbe.de
       http:
         paths:
           - path: /
@@ -62,4 +60,4 @@ spec:
   tls:
     - secretName: whoami-tls
       hosts:
-        - jonasbe.de
+        - whoami.jonasbe.de
