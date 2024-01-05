@@ -3,7 +3,7 @@
 cat <<EOF | sudo tee kubeadm-conf.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-controlPlaneEndpoint: jonasbe.de:6443
+controlPlaneEndpoint: cp.k8s.jonasbe.de:6443
 clusterName: "jk8s-cluster"
 ---
 kind: KubeletConfiguration
@@ -17,5 +17,9 @@ nodeRegistration:
 EOF
 
 kubeadm init --config kubeadm-conf.yaml
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
