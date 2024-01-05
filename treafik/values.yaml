@@ -5,6 +5,11 @@ providers:
   kubernetesIngress:
     publishedService:
       enabled: true
+ports:
+  web:
+    nodePort: 30432
+  websecure:
+    nodePort: 30742
 priorityClassName: "system-cluster-critical"
 tolerations:
   - key: "CriticalAddonsOnly"
