@@ -13,4 +13,5 @@ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.1
 
 
 # Cluster Issuer
+# If this fails retry after some secconds (wait for cert-manager pods)
 kubectl apply -f letsencrypt-issuer.yaml
