@@ -1,15 +1,28 @@
 #!/bin/bash
 
-hostnamectl set-hostname nc1.jonasbe.de
+# Required environment variables
+env_vars=("NEW_USER" "PW" "NEW_HOSTNAME")
 
-# Create user jonasbe
-useradd -m -s /bin/bash jonasbe
-usermod -aG sudo jonasbe
+# Check if required environment variables are set
+for var in "${env_vars[@]}"; do
+  if [ "${!var}" == "" ]; then
+    printf "\e[0;31mError: Environment variable \e[1m$var\e[0;31m is empty.\e[0m\n"
+    exit 1
+  fi
+done
 
-# Copy ssh keys to jonasbe and remove ssh keys from root
-cp -r .ssh /home/jonasbe
-chown jonasbe:jonasbe /home/jonasbe/.ssh
-chown jonasbe:jonasbe /home/jonasbe/.ssh/authorized_keys
+
+hostnamectl set-hostname $NEW_HOSTNAME
+
+# Create new user
+useradd -m -s /bin/bash $NEW_USER
+usermod -aG sudo $NEW_USER
+echo "$NEW_USER:$PW" | sudo chpasswd
+
+# Copy ssh keys to the new user and remove ssh keys from root
+cp -r .ssh /home/$NEW_USER
+chown $NEW_USER:$NEW_USER /home/$NEW_USER/.ssh
+chown &NEW_USER:$NEW_USER /home/$NEW_USER/.ssh/authorized_keys
 rm .ssh/authorized_keys
 
 # Upgrade system
