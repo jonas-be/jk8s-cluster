@@ -1,7 +1,7 @@
 # jk8s-cluster
 
 
-## Start be preparing your nodes
+## Start by preparing your nodes
 
 1. Add an ssh key to the ``authorized_keys`` file on your hosts
 2. Modify the script ``bootstrap/node-init.sh`` to your needs (change the hostname and username)
