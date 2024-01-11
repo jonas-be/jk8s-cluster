@@ -27,7 +27,13 @@ done
 
 master_server=${servers[0]}
 
+echo "++++++++++++++++++++++++++++++++++"
+printf "Kubeadm init on: \e[1m$master_server\e[0m\n"
+echo "++++++++++++++++++++++++++++++++++"
+
 ssh $NEW_USER@$master_server "CP_ENDPOINT=$CP_ENDPOINT CLUSTER_NAME=$CLUSTER_NAME PW=$PW bash -s" < bootstrap/kubeadm-init.sh
+
+
 # Get cert key
 cert_upload_output=$(ssh $NEW_USER@$master_server "echo $PW | sudo -S kubeadm init phase upload-certs --upload-certs")
 cert_key=$(echo $cert_upload_output |grep -P '.*\[upload-certs\] Using certificate key: \K.*' -o)
@@ -40,6 +46,14 @@ cp_join_command="echo $PW | sudo -S $join_command --control-plane --certificate-
 # Join all nodes to the cluster except the master node
 for ((i = 1; i < ${#servers[@]}; i++)); do
   server="${servers[$i]}"
+  echo "++++++++++++++++++++++++++++++++++"
+  printf "Kubeadm join on: \e[1m$server\e[0m\n"
+  echo "++++++++++++++++++++++++++++++++++"
+
   ssh $NEW_USER@$server "$cp_join_command"
   ssh $NEW_USER@$server "echo $PW | sudo -S mkdir -p $HOME/.kube; sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config; sudo chown $(id -u):$(id -g) $HOME/.kube/config"
 done
+
+# Install CNI
+ssh $NEW_USER@$master_server "echo $PW | sudo -S whoami; bash -s" < bootstrap/install-cni.sh
+
