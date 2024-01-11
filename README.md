@@ -18,17 +18,18 @@
 You need to run on the node you initialized the cluster
 
 ```bash
-kubeadm init phase upload-certs --upload-certs
+sudo kubeadm init phase upload-certs --upload-certs
 ```
 
 Remember the output.
 
 ```bash
-kubeadm token create --print-join-command
+sudo kubeadm token create --print-join-command
 ```
 
 Then compose joining command for joinning-master-node from this output and add to it
-```--control-plane --certificate-key xxxx```
+```--control-plane --certificate-key xxxx``` 
+and also add ``sudo`` before the command if you are not the root user.
 
 ## Install CNI
 
