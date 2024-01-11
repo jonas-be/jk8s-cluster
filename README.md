@@ -1,20 +1,19 @@
 # jk8s-cluster
 
-## Bootstrap
 
-### Start be preparing your nodes
+## Start be preparing your nodes
 
 1. Add an ssh key to the ``authorized_keys`` file on your hosts
 2. Modify the script ``bootstrap/node-init.sh`` to your needs (change the hostname and username)
 3. Copy your version of the ``bootstrap/node-init.sh`` on your nodes and run it as root
 4. Set an password for the new user: execute ``passwd YOUR_USER``
 
-### Initialize the cluster
+## Initialize the cluster
 
 1. Modify the ``bootstrap/kubeadm-init.sh`` script to your needs (change the *control-plane-endpoint*)
 2. Copy your version of the ``bootstrap/kubeadm-init.sh`` on one of your nodes and run it as root (sudo with you user)
 
-### Join the other nodes
+## Join the other nodes
 
 You need to run on the node you initialized the cluster
 
@@ -31,11 +30,11 @@ kubeadm token create --print-join-command
 Then compose joining command for joinning-master-node from this output and add to it
 ```--control-plane --certificate-key xxxx```
 
-### Install CNI
+## Install CNI
 
 I use cilium as CNI. Just follow the [cilium docs](https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/)
 
-#### Install cilium cli
+### Install cilium cli
 
 ```bash
 # Install script from the cilium docs
@@ -48,14 +47,14 @@ sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 ```
 
-#### Install the CNI
+### Install the CNI
 
 ```bash
 # Install cilium CNI command from cilium docs
 cilium install --version 1.14.5
 ```
 
-### Port forwarding
+## Port forwarding
 
 To forward ports to a node port, you can look at the scripts in ``port-forward``.
 
@@ -65,7 +64,7 @@ First execute ``./port-forward/install.sh`` to install ``socat`` and ``screen``.
 Then start the ``./port-forward/start-forward.sh`` script to forward the port configured in there.
 By default it forwards port 80 and 443 to the nodeports configure in the Traefik deployment.
 
-### Deploy Traefik Ingress
+## Deploy Traefik Ingress
 
 To install Traefik Ingress you first have to execute the script ``traefik/deploly.sh``,
 which has some helm and kubectl commands to install ``Traefik`` and ``certmanager``. <br>
@@ -73,7 +72,7 @@ After the deploying of ``traefik`` and ``certmanger`` you can set up your issuer
 Edit the ``traefik/letsencrypt-issuer.yaml`` file and change the email to your email.
 Then apply it ``kubectl apply -f traefik/letsencrypt-issuer.yaml``.
 
-#### Test Deployment with Ingress and SSL
+### Test Deployment with Ingress and SSL
 
 Edit the ``traefik/whoami/whoami.yaml``  file and change the domain to your domain.
 Make sure the domain is pointing to all of your servers.
