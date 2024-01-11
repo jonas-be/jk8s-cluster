@@ -22,7 +22,7 @@ echo "$NEW_USER:$PW" | sudo chpasswd
 # Copy ssh keys to the new user and remove ssh keys from root
 cp -r .ssh /home/$NEW_USER
 chown $NEW_USER:$NEW_USER /home/$NEW_USER/.ssh
-chown &NEW_USER:$NEW_USER /home/$NEW_USER/.ssh/authorized_keys
+chown $NEW_USER:$NEW_USER /home/$NEW_USER/.ssh/authorized_keys
 rm .ssh/authorized_keys
 
 # Upgrade system
