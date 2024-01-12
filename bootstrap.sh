@@ -38,7 +38,7 @@ env_vars=("NEW_USER" "PW" "CP_ENDPOINT" "CLUSTER_NAME" "EMAIL" "SERVERS")
 # Check if required environment variables are set
 for var in "${env_vars[@]}"; do
   if [ "${!var}" == "" ]; then
-    printf "\e[0;31mError: Environment variable \e[1m$var\e[0;31m is empty.\e[0m\n"
+    printf "\e[0;31mError: Environment variable \e[1m$var\e[0;31m is empty.\e[0m Use --help for help\n"
     exit 1
   fi
 done
