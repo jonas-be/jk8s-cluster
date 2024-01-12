@@ -1,10 +1,27 @@
 #!/bin/bash
 
+# Required environment variables
+env_vars=("CP_ENDPOINT" "CLUSTER_NAME")
+
+# Check if required environment variables are set
+for var in "${env_vars[@]}"; do
+  if [ "${!var}" == "" ]; then
+    printf "\e[0;31mError: Environment variable \e[1m$var\e[0;31m is empty.\e[0m\n"
+    exit 1
+  fi
+done
+
+
+# Get root rights with sudo
+# If PW is not set, ask for it
+echo $PW | sudo -S whoami
+
+
 cat <<EOF | sudo tee kubeadm-conf.yaml
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-controlPlaneEndpoint: cp.k8s.jonasbe.de:6443
-clusterName: "jk8s-cluster"
+controlPlaneEndpoint: $CP_ENDPOINT
+clusterName: $CLUSTER_NAME
 ---
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
@@ -16,7 +33,7 @@ nodeRegistration:
   criSocket: "unix:///var/run/containerd/containerd.sock"
 EOF
 
-kubeadm init --config kubeadm-conf.yaml
+sudo kubeadm init --config kubeadm-conf.yaml
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config

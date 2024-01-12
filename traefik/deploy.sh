@@ -10,8 +10,3 @@ helm install --namespace=traefik --values values.yaml traefik traefik/traefik
 
 # Cert Manager
 kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.13.3/cert-manager.yaml
-
-
-# Cluster Issuer
-# If this fails retry after some secconds (wait for cert-manager pods)
-kubectl apply -f letsencrypt-issuer.yaml
