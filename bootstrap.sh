@@ -20,11 +20,11 @@ for server in "${servers[@]}" ; do
   ssh root@$server "NEW_USER=$NEW_USER PW=$PW NEW_HOSTNAME=$server bash -s" < bootstrap/node-init.sh
 
   # Install and upload scripts for port forwarding
-  ssh $NEW_USER@$master_server "echo $PW | sudo -S whoami; bash -s" < port-forward/install.sh
+  ssh $NEW_USER@$server "echo $PW | sudo -S whoami; bash -s" < port-forward/install.sh
   sftp $NEW_USER@$server <<< $'put port-forward/start-forward.sh'
 
   # Start port-forward
-  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./start-forward.sh"
+  ssh $NEW_USER@$server "echo $PW | sudo -S ./start-forward.sh"
 done
 
 
@@ -63,14 +63,6 @@ done
 # Install CNI
 
 ssh $NEW_USER@$master_server "echo $PW | sudo -S whoami; bash -s" < bootstrap/install-cni.sh
-
-
-# Start port-forward
-
-for server in "${servers[@]}" ; do
-  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./install.sh"
-  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./start-forward.sh"
-done
 
 
 # Download kubeconfig
