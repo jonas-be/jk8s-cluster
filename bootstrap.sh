@@ -7,22 +7,22 @@ Usage:
 You need the following environment variables set:
 
 # Username and Password of the new user
-export NEW_USER="jonasbe"
-export PW="abc"
+export NEW_USER='jonasbe'
+export PW='abc'
 
 # Control plane endpoint 
-export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
+export CP_ENDPOINT='cp.k8s.jonasbe.de:6443'
 
 # Cluster name
-export CLUSTER_NAME="jk8s"
+export CLUSTER_NAME='jk8s'
 
 # Email for Let's Encrypt
-export EMAIL="jonasbe.dev@gmail.com"
+export EMAIL='jonasbe.dev@gmail.com'
 
 # Servers to setup
 # it musst be the domain to connect and the hostname of a server
 # the first server is the node which runs kubeadm init
-export SERVERS=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
+export SERVERS=('nc1.jonasbe.de' 'nc2.jonasbe.de' 'ph1.jonasbe.de')
 
 EOF
 }
