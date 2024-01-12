@@ -2,28 +2,26 @@
 # Author: jonas-be
 
 usage() {
-  cat <<EOF
-Usage:
-You need the following environment variables set:
-
-# Username and Password of the new user
-export NEW_USER='jonasbe'
-export PW='abc'
-
-# Control plane endpoint 
-export CP_ENDPOINT='cp.k8s.jonasbe.de:6443'
-
-# Cluster name
-export CLUSTER_NAME='jk8s'
-
-# Email for Let's Encrypt
-export EMAIL='jonasbe.dev@gmail.com'
-
-# Servers to setup
-# it musst be the domain to connect and the hostname of a server
-# the first server is the node which runs kubeadm init
-export SERVERS='nc1.jonasbe.de nc2.jonasbe.de ph1.jonasbe.de'
-EOF
+  printf "\e[1mUsage:\e[0m\n"
+  printf "You need the following environment variables set:\e[0m\n"
+  echo
+  printf "\e[3m# Username and Password of the new user\e[0m\n"
+  printf "export \e[1mNEW_USER\e[0m='jonasbe'\e[0m\n"
+  printf "export \e[1mPW\e[0m='abc'\e[0m\n"
+  echo
+  printf "\e[3m# Control plane endpoint\e[0m\n"
+  printf "export \e[1mCP_ENDPOINT\e[0m='cp.k8s.jonasbe.de:6443'\e[0m\n"
+  echo
+  printf "\e[3m# Cluster name\e[0m\n"
+  printf "export \e[1mCLUSTER_NAME\e[0m='jk8s'\e[0m\n"
+  echo
+  printf "\e[3m# Email for Let's Encrypt\e[0m\n"
+  printf "export \e[1mEMAIL\e[0m='jonasbe.dev@gmail.com'\e[0m\n"
+  echo
+  printf "\e[3m# Servers to setup\e[0m\n"
+  printf "\e[3m# it musst be the domain to connect and the hostname of a server\e[0m\n"
+  printf "\e[3m# the first server is the node which runs kubeadm init\e[0m\n"
+  printf "export \e[1mSERVERS\e[0m='nc1.jonasbe.de nc2.jonasbe.de ph1.jonasbe.de'\e[0m\n"
 }
 
 if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
@@ -45,10 +43,25 @@ done
 
 
 # Load servers from env
+server_array=($SERVERS)
 
-stringarray=($SERVERS)
+
+# Confirm execution
+
+printf " User:                     \e[1m$NEW_USER\e[0m\n"
+printf " Control plane endpoint:   \e[1m$CP_ENDPOINT\e[0m\n"
+printf " Cluster name:             \e[1m$CLUSTER_NAME\e[0m\n"
+printf " Let's Encrypt email:      \e[1m$EMAIL\e[0m\n\n"
 echo 'Execute on the following servers:'
-echo $stringarray
+for server in "${server_array[@]}" ; do
+  printf " >\e[1m $server \e[0m\n"
+done
+echo
+
+if [[ ! "${1-}" =~ ^-*y(es)?$ ]]; then
+  printf "\e[1;31mCRTL-C\e[0;31m to abort \e[0m| \e[1mAny Key\e[0m to Continue\n"
+  read  -n 1 -p "(Abbort/Continue)? " mainmenuinput
+fi
 
 
 # Node init
