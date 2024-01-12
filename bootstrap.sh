@@ -133,8 +133,8 @@ export KUBECONFIG=../kubeconfig-$CLUSTER_NAME
 cd ..
 export KUBECONFIG=kubeconfig-$CLUSTER_NAME
 
-echo "Wait 5s for cert-manager to start if it fails retry 'cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -'"
-sleep 5
+echo "Wait 10s for cert-manager to start if it fails retry 'cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -'"
+sleep 10
 
 cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -
 
