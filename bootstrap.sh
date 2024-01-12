@@ -22,8 +22,7 @@ export EMAIL='jonasbe.dev@gmail.com'
 # Servers to setup
 # it musst be the domain to connect and the hostname of a server
 # the first server is the node which runs kubeadm init
-export SERVERS=('nc1.jonasbe.de' 'nc2.jonasbe.de' 'ph1.jonasbe.de')
-
+export SERVERS='nc1.jonasbe.de nc2.jonasbe.de ph1.jonasbe.de'
 EOF
 }
 
@@ -31,6 +30,7 @@ if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
     usage
     exit
 fi
+
 
 # Required environment variables
 env_vars=("NEW_USER" "PW" "CP_ENDPOINT" "CLUSTER_NAME" "EMAIL" "SERVERS")
@@ -44,9 +44,16 @@ for var in "${env_vars[@]}"; do
 done
 
 
+# Load servers from env
+
+stringarray=($SERVERS)
+echo 'Execute on the following servers:'
+echo $stringarray
+
+
 # Node init
 
-for server in "${SERVERS[@]}" ; do
+for server in "${server_array[@]}" ; do
   echo "++++++++++++++++++++++++++++++++++"
   printf "Node init for: \e[1m$server\e[0m\n"
   echo "++++++++++++++++++++++++++++++++++"
@@ -64,7 +71,7 @@ done
 
 # Kubeadm init
 
-master_server=${SERVERS[0]}
+master_server=${server_array[0]}
 
 echo "++++++++++++++++++++++++++++++++++"
 printf "Kubeadm init on: \e[1m$master_server\e[0m\n"
@@ -83,8 +90,8 @@ join_command=$(ssh $NEW_USER@$master_server "echo $PW | sudo -S kubeadm token cr
 cp_join_command="echo $PW | sudo -S $join_command --control-plane --certificate-key $cert_key"
 
 # Join all nodes to the cluster except the master node
-for ((i = 1; i < ${#SERVERS[@]}; i++)); do
-  server="${SERVERS[$i]}"
+for ((i = 1; i < ${#server_array[@]}; i++)); do
+  server="${server_array[$i]}"
   echo "++++++++++++++++++++++++++++++++++"
   printf "Kubeadm join on: \e[1m$server\e[0m\n"
   echo "++++++++++++++++++++++++++++++++++"
