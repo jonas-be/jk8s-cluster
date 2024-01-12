@@ -1,18 +1,34 @@
 #!/bin/bash
+# Author: jonas-be
+#
+# Example environment variables
+#
+# export NEW_USER="jonasbe"
+# export PW="abc"
+#
+# export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
+# export CLUSTER_NAME="jk8s"
+#
+# export EMAIL="jonasbe.dev@gmail.com"
+#
+# export SERVERS=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
 
-export NEW_USER="jonasbe"
-export PW="abc"
 
-export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
-export CLUSTER_NAME="jk8s"
+# Required environment variables
+env_vars=("NEW_USER" "PW" "CP_ENDPOINT" "CLUSTER_NAME" "EMAIL" "SERVERS")
 
-export EMAIL="jonasbe.dev@gmail.com"
+# Check if required environment variables are set
+for var in "${env_vars[@]}"; do
+  if [ "${!var}" == "" ]; then
+    printf "\e[0;31mError: Environment variable \e[1m$var\e[0;31m is empty.\e[0m\n"
+    exit 1
+  fi
+done
 
-servers=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
 
 # Node init
 
-for server in "${servers[@]}" ; do
+for server in "${SERVERS[@]}" ; do
   echo "++++++++++++++++++++++++++++++++++"
   printf "Node init for: \e[1m$server\e[0m\n"
   echo "++++++++++++++++++++++++++++++++++"
@@ -30,7 +46,7 @@ done
 
 # Kubeadm init
 
-master_server=${servers[0]}
+master_server=${SERVERS[0]}
 
 echo "++++++++++++++++++++++++++++++++++"
 printf "Kubeadm init on: \e[1m$master_server\e[0m\n"
@@ -49,8 +65,8 @@ join_command=$(ssh $NEW_USER@$master_server "echo $PW | sudo -S kubeadm token cr
 cp_join_command="echo $PW | sudo -S $join_command --control-plane --certificate-key $cert_key"
 
 # Join all nodes to the cluster except the master node
-for ((i = 1; i < ${#servers[@]}; i++)); do
-  server="${servers[$i]}"
+for ((i = 1; i < ${#SERVERS[@]}; i++)); do
+  server="${SERVERS[$i]}"
   echo "++++++++++++++++++++++++++++++++++"
   printf "Kubeadm join on: \e[1m$server\e[0m\n"
   echo "++++++++++++++++++++++++++++++++++"
