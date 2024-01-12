@@ -1,18 +1,36 @@
 #!/bin/bash
 # Author: jonas-be
-#
-# Example environment variables
-#
-# export NEW_USER="jonasbe"
-# export PW="abc"
-#
-# export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
-# export CLUSTER_NAME="jk8s"
-#
-# export EMAIL="jonasbe.dev@gmail.com"
-#
-# export SERVERS=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
 
+usage() {
+  cat <<EOF
+Usage:
+You need the following environment variables set:
+
+# Username and Password of the new user
+export NEW_USER="jonasbe"
+export PW="abc"
+
+# Control plane endpoint 
+export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
+
+# Cluster name
+export CLUSTER_NAME="jk8s"
+
+# Email for Let's Encrypt
+export EMAIL="jonasbe.dev@gmail.com"
+
+# Servers to setup
+# it musst be the domain to connect and the hostname of a server
+# the first server is the node which runs kubeadm init
+export SERVERS=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
+
+EOF
+}
+
+if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
+    usage
+    exit
+fi
 
 # Required environment variables
 env_vars=("NEW_USER" "PW" "CP_ENDPOINT" "CLUSTER_NAME" "EMAIL" "SERVERS")
