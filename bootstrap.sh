@@ -4,7 +4,9 @@ export NEW_USER="jonasbe"
 export PW="abc"
 
 export CP_ENDPOINT="cp.k8s.jonasbe.de:6443"
-export CLUSTER_NAME="k8s.jonasbe.de"
+export CLUSTER_NAME="jk8s"
+
+export EMAIL="jonasbe.dev@gmail.com"
 
 servers=("nc1.jonasbe.de" "nc2.jonasbe.de" "ph1.jonasbe.de")
 
@@ -17,9 +19,12 @@ for server in "${servers[@]}" ; do
 
   ssh root@$server "NEW_USER=$NEW_USER PW=$PW NEW_HOSTNAME=$server bash -s" < bootstrap/node-init.sh
 
-  # Upload scripts for port forwarding
-  sftp $NEW_USER@$server <<< $'put port-forward/install.sh'
+  # Install and upload scripts for port forwarding
+  ssh $NEW_USER@$master_server "echo $PW | sudo -S whoami; bash -s" < port-forward/install.sh
   sftp $NEW_USER@$server <<< $'put port-forward/start-forward.sh'
+
+  # Start port-forward
+  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./start-forward.sh"
 done
 
 
@@ -54,6 +59,40 @@ for ((i = 1; i < ${#servers[@]}; i++)); do
   ssh $NEW_USER@$server "echo $PW | sudo -S mkdir -p $HOME/.kube; sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config; sudo chown $(id -u):$(id -g) $HOME/.kube/config"
 done
 
+
 # Install CNI
+
 ssh $NEW_USER@$master_server "echo $PW | sudo -S whoami; bash -s" < bootstrap/install-cni.sh
+
+
+# Start port-forward
+
+for server in "${servers[@]}" ; do
+  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./install.sh"
+  ssh $NEW_USER@$master_server "echo $PW | sudo -S ./start-forward.sh"
+done
+
+
+# Download kubeconfig
+
+sftp $NEW_USER@$master_server <<< $'get .kube/config'
+mv config kubeconfig-$CLUSTER_NAME
+
+
+# Deploy Traefik Ingress
+
+cd traefik
+export KUBECONFIG=../kubeconfig-$CLUSTER_NAME
+./deploy.sh
+cd ..
+export KUBECONFIG=kubeconfig-$CLUSTER_NAME
+
+echo "Wait 5s for cert-manager to start if it fails retry 'cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -'"
+sleep 5
+
+cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -
+
+echo "  +++++++++++++++++++++++++++++"
+printf "  | \e[1;32m✔️ Cluster setup completed \e[0m|\n"
+echo "  +++++++++++++++++++++++++++++"
 
