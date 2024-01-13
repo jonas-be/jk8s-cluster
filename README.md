@@ -107,6 +107,11 @@ By default it forwards port 80 and 443 to the nodeports configure in the Traefik
 3. Wait 10s to let certmanager get ready
 4. Apply letsencrypt clusterissuer, for tls certificates
 
+### Deploy Longhorn
+
+1. Prepare the nodes for longhorn
+2. Install longhorn over helm
+
 ## Deployments
 
 ### Test Deployment with Ingress and SSL
