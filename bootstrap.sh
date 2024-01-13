@@ -138,7 +138,20 @@ sleep 10
 
 cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -
 
+
+# Deploy Longhorn
+
+for server in "${server_array[@]}" ; do
+  echo "++++++++++++++++++++++++++++++++++"
+  printf "Longhorn pre-setup for: \e[1m$server\e[0m\n"
+  echo "++++++++++++++++++++++++++++++++++"
+
+  ssh $NEW_USER@$server "echo $PW | sudo -S whoami; bash -s" < longhorn/pre-install.sh
+done
+
+./longhorn/deploy.sh
+
+
 echo "  +++++++++++++++++++++++++++++"
 printf "  | \e[1;32m✔️ Cluster setup completed \e[0m|\n"
 echo "  +++++++++++++++++++++++++++++"
-
