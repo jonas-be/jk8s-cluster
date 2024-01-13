@@ -60,7 +60,7 @@ echo
 
 if [[ ! "${1-}" =~ ^-*y(es)?$ ]]; then
   printf "\e[1;31mCRTL-C\e[0;31m to abort \e[0m| \e[1mAny Key\e[0m to Continue\n"
-  read  -n 1 -p "(Abbort/Continue)? " mainmenuinput
+  read  -n 1 -p "(Abort/Continue)? " mainmenuinput
 fi
 
 
