@@ -125,6 +125,11 @@ sftp $NEW_USER@$master_server <<< $'get .kube/config'
 mv config kubeconfig-$CLUSTER_NAME
 
 
+# Untaint all nodes
+export KUBECONFIG=kubeconfig-$CLUSTER_NAME
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+
 # Deploy Traefik Ingress
 
 cd traefik
