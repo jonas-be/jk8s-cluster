@@ -1,5 +1,15 @@
 # jk8s-cluster
 
+This repo contains scripts to setup a kubernetes cluster with 3 nodes untainted.
+It is fully automated and installs the following:
+
+- Kubernetes (via kubeadm)
+- Cilium (CNI)
+- Traefik (Ingress)
+- Certmanager (TLS certificates)
+- Socat binary and a script (for port forwarding)
+- Longhorn (Storage)
+
 ## Requirements
 
 - 3 Servers
@@ -43,7 +53,7 @@ export EMAIL='jonasbe.dev@gmail.com'
 # Servers to setup
 # it musst be the domain to connect and the hostname of a server
 # the first server is the node which runs kubeadm init
-export SERVERS='nc1.jonasbe.de nc2.jonasbe.de ph1.jonasbe.de'
+export SERVERS='nc1.jonasbe.de nc2.jonasbe.de nc3.jonasbe.de'
 ```
 
 **After configuring the setup, execute the script:**
@@ -72,7 +82,7 @@ Runs on the first node you configured
 
 ### Join the other nodes
 
-1. Runs ```upload-certs``` over kubeadm
+1. Runs ```upload-certs``` via kubeadm
 2. Generate a join command
 3. Combines the certs from step 1 and the join command from step 2 and uses it to join the node
 
@@ -102,7 +112,7 @@ By default it forwards port 80 and 443 to the nodeports configure in the Traefik
 
 ### Deploy Traefik Ingress
 
-1. Install Traefik over helm
+1. Install Traefik via helm
 2. Install certmanager
 3. Wait 10s to let certmanager get ready
 4. Apply letsencrypt clusterissuer, for tls certificates
@@ -110,7 +120,7 @@ By default it forwards port 80 and 443 to the nodeports configure in the Traefik
 ### Deploy Longhorn
 
 1. Prepare the nodes for longhorn
-2. Install longhorn over helm
+2. Install longhorn via helm
 
 ## Deployments
 
