@@ -27,6 +27,7 @@ It is fully automated and installs the following:
 
 1. Debain 12
 2. Add your ssh key to the ``authorized_keys`` file on the root
+3. Make sure all hosts are in your known hosts file
 
 **Create control plane endpoint:**
 
