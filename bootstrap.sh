@@ -139,9 +139,6 @@ cd ..
 export KUBECONFIG=kubeconfig-$CLUSTER_NAME
 
 echo "Wait 10s for cert-manager to start if it fails retry 'cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -'"
-sleep 10
-
-cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -
 
 
 # Deploy Longhorn
@@ -155,6 +152,10 @@ for server in "${server_array[@]}" ; do
 done
 
 ./longhorn/deploy.sh
+
+
+# Deploy Letsencrypt Issuer (after longhorn, to wait for the traefik installation)
+cat traefik/letsencrypt-issuer.yaml | envsubst  | kubectl apply -f -
 
 
 echo "  +++++++++++++++++++++++++++++"
